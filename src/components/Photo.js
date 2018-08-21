@@ -24,8 +24,8 @@ class PhotoInfo extends Component {
       <div className="foto-info">
         <div className="foto-info-likes">
           {
-            this.props.photo.likers.map( liker => {
-              return  <a href="#">{ liker.login }, </a>
+            this.props.photo.likers.map((liker, index) => {
+              return  <a key={ index } href="#">{ liker.login }, </a>
             })
           }
           curtiram
@@ -38,9 +38,9 @@ class PhotoInfo extends Component {
 
         <ul className="foto-info-comentarios">
           {
-            this.props.photo.comentarios.map( comment => {
+            this.props.photo.comentarios.map((comment, index) => {
               return (
-                <li className="comentario">
+                <li key={ index } className="comentario">
                   <a className="foto-info-autor">{ comment.login }</a>
                   { comment.texto }
                 </li>
