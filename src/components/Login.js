@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import history from '../History'
 
 export default class Login extends Component {
 
@@ -29,13 +30,17 @@ export default class Login extends Component {
         if (response.ok) {
           return response.text()
         } else {
-          this.setState({
-            msg: 'Não foi possível fazer login'
-          })
+          throw new Error('Não foi possível fazer login')
         }
       })
       .then( token => {
-        console.log(token)
+        localStorage.setItem('auth-token', token)
+        history.push('/timeline')
+      })
+      .catch( error  => {
+        this.setState({
+          msg: error.message
+        })
       })
   }
 
@@ -43,6 +48,7 @@ export default class Login extends Component {
     return (
       <div className="login-box">
         <h1 className="header-logo">Instalura</h1>
+        <span>{ this.state.msg }</span>
         <form onSubmit={ this.sendLoginForm.bind(this) }>
           <input type="text" ref={ input => this.login = input } />
           <input type="password" ref={ input => this.password = input } />

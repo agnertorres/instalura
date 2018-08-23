@@ -6,12 +6,13 @@ import './css/login.css'
 import App from './App'
 import registerServiceWorker from './registerServiceWorker'
 
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { Router, Route } from 'react-router-dom'
+import history  from './History'
 
-import Login from './components/Login';
+import Login from './components/Login'
 
 ReactDOM.render((
-  <Router>
+  <Router history={ history }>
     <div>
       <Route exact path="/" component={ Login } />
       <Route exact path="/timeline" component={ App } />
