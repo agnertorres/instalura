@@ -3,15 +3,22 @@ import history from '../History'
 
 export default class Login extends Component {
 
-  constructor() {
-    super()
+  constructor( props ) {
+    super(props)
+
+    let msg = ''
+
+    if (this.props.location.state) {
+      msg = this.props.location.state.msg
+    }
+
     this.state = {
-      msg: ''
+      msg: msg
     }
 
   }
 
-  sendLoginForm(event) {
+  sendLoginForm( event ) {
     event.preventDefault()
 
     const requestInfo = {
