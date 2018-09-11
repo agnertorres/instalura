@@ -10,6 +10,7 @@ import { Router, Route, Redirect } from 'react-router-dom'
 import history  from './History'
 
 import Login from './components/Login'
+import Logout from './components/Logout'
 
 function verifyAuthentication() {
   if (localStorage.getItem('auth-token') != null) {
@@ -33,6 +34,7 @@ ReactDOM.render((
           }} />
         }
       }} />
+      <Route exact path="/logout" component={ Logout } />
     </div>
   </Router>
 ), document.getElementById('root'))
