@@ -1,5 +1,5 @@
 import { Component } from 'react'
-import { withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom"
 
 class Logout extends Component {
 
@@ -17,4 +17,4 @@ class Logout extends Component {
   }
 }
 
-export default withRouter(Logout);
+export default withRouter(Logout)
