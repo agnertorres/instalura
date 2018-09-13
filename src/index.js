@@ -22,11 +22,15 @@ function verifyAuthentication(props) {
 
   const authToken = localStorage.getItem('auth-token')
 
-  if(isPrivateRoute && authToken) {
-    return true
+  if(isPrivateRoute) {
+    if(authToken) {
+      return true
+    } else {
+      return false
+    }
   }
 
-  return false
+  return true
 }
 
 ReactDOM.render((
