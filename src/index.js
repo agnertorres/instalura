@@ -6,47 +6,18 @@ import './css/login.css'
 import App from './App'
 import registerServiceWorker from './registerServiceWorker'
 
-import { Router, Route, Redirect, matchPath } from 'react-router-dom'
+import { Router, Route } from 'react-router-dom'
 import history  from './History'
 
 import Login from './components/Login'
 import Logout from './components/Logout'
 
 
-function verifyAuthentication(props) {
-
-  const pathname = props.history.location.pathname
-
-  const isMatch = matchPath(pathname, {path: '/timeline/:login'})
-  const isPrivateRoute = isMatch === null
-
-  const authToken = localStorage.getItem('auth-token')
-
-  if(isPrivateRoute) {
-    if(authToken) {
-      return true
-    } else {
-      return false
-    }
-  }
-
-  return true
-}
-
 ReactDOM.render((
   <Router history={ history }>
     <div>
       <Route exact path="/" component={ Login } />
-      <Route path="/timeline/:login?" render={ (props) => {
-        if(verifyAuthentication(props)) {
-          return <App/>
-        } else {
-          return <Redirect to={{
-            pathname: '/',
-            state: { msg: 'Você precisar estar logado para acessar essa página' }
-          }} />
-        }
-      }} />
+      <Route path="/timeline/:login?" component={ App } />
       <Route exact path="/logout" component={ Logout } />
     </div>
   </Router>

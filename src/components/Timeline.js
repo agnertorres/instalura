@@ -4,19 +4,28 @@ import PhotoItem from './Photo'
 
 export default class Timeline extends Component {
 
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
 
     this.state = {
-      photos: []
+      photos: [],
+      loginParam: props.login
     }
   }
 
   componentDidMount() {
 
+    let profileUrl;
     const authToken = localStorage.getItem('auth-token')
 
-    fetch(`https://instalura-api.herokuapp.com/api/fotos?X-AUTH-TOKEN=${ authToken }`)
+    if (this.state.loginParam) {
+      profileUrl = `https://instalura-api.herokuapp.com/api/public/fotos/${ this.state.loginParam }`
+
+    } else {
+      profileUrl = `https://instalura-api.herokuapp.com/api/fotos?X-AUTH-TOKEN=${ authToken }`
+    }
+
+    fetch(profileUrl)
       .then( response => response.json() )
       .then( photos => {
         this.setState({
