@@ -55,10 +55,42 @@ class PhotoInfo extends Component {
 }
 
 class PhotoUpdates extends Component {
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      liked: this.props.photo.likeada
+    }
+  }
+
+  likePhoto( event ) {
+    event.preventDefault()
+
+    const authToken = localStorage.getItem('auth-token')
+
+    const requestUrl = `https://instalura-api.herokuapp.com/api/fotos/${ this.props.photo.id }/like?X-AUTH-TOKEN=${ authToken }`,
+          requestParams = { method: 'POST' }
+
+    fetch(requestUrl, requestParams)
+      .then( response => {
+        if(response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Não foi possível curtir a foto')
+        }
+      })
+      .then( liker => {
+        this.setState({
+          liked: !this.state.liked
+        })
+      })
+  }
+
   render() {
     return (
       <section className="fotoAtualizacoes">
-        <a href="#" className="fotoAtualizacoes-like">Likar</a>
+        <a onClick={ this.likePhoto.bind(this) } className={ this.state.liked ? 'fotoAtualizacoes-like-ativo' : 'fotoAtualizacoes-like' }>Likar</a>
         <form className="fotoAtualizacoes-form">
           <input type="text" placeholder="Adicione um comentário..." className="fotoAtualizacoes-form-campo"/>
           <input type="submit" value="Comentar!" className="fotoAtualizacoes-form-submit"/>
@@ -76,7 +108,7 @@ export default class PhotoItem extends Component {
         <img alt="foto" className="foto-src" src={ this.props.photo.urlFoto }/>
 
         <PhotoInfo photo={ this.props.photo }/>
-        <PhotoUpdates/>
+        <PhotoUpdates photo={ this.props.photo }/>
       </div>
     )
   }
