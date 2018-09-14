@@ -33,7 +33,7 @@ class App extends Component {
           <div className="main">
   
             <Header/>
-            <Timeline login={ this.props.match.params.login }/>
+            <Timeline loginParam={ this.props.match.params.login }/>
             
           </div>
         </div>
