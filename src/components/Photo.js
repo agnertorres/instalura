@@ -26,7 +26,8 @@ class PhotoInfo extends Component {
     super(props)
 
     this.state = {
-      likers: this.props.photo.likers
+      likers: this.props.photo.likers,
+      comments: this.props.photo.comentarios
     }
   }
 
@@ -57,6 +58,17 @@ class PhotoInfo extends Component {
         }
       }
     })
+
+    Pubsub.subscribe('new-comments', (topic, infoComment) => {
+
+      if (this.props.photo.id === infoComment.photoId) {
+        const newComments = this.state.comments.concat(infoComment.newComment)
+
+        this.setState({
+          comments: newComments
+        })
+      }
+    })
   }
 
   render() {
@@ -78,7 +90,7 @@ class PhotoInfo extends Component {
 
         <ul className="foto-info-comentarios">
           {
-            this.props.photo.comentarios.map(( comment ) => {
+            this.state.comments.map(( comment ) => {
               return (
                 <li key={ comment.id } className="comentario">
                   <Link to={`/timeline/${ comment.login }`} className="foto-info-autor">{ comment.login }</Link>
@@ -126,12 +138,41 @@ class PhotoUpdates extends Component {
       })
   }
 
+  commentPhoto( event ) {
+    event.preventDefault()
+
+    const authToken = localStorage.getItem('auth-token')
+
+    const requestUrl = `https://instalura-api.herokuapp.com/api/fotos/${ this.props.photo.id }/comment?X-AUTH-TOKEN=${ authToken }`,
+          requestParams = { 
+            method: 'POST',
+            body: JSON.stringify({
+              texto: this.comment.value
+            }),
+            headers: new Headers({
+              'Content-type': 'application/json'
+            })
+          }
+
+    fetch(requestUrl, requestParams)
+      .then( response => {
+        if(response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Não foi possível comentar a foto')
+        }
+      })
+      .then( newComment => {
+        Pubsub.publish('new-comments', { photoId: this.props.photo.id, newComment })
+      })
+  }
+
   render() {
     return (
       <section className="fotoAtualizacoes">
         <a onClick={ this.likePhoto.bind(this) } className={ this.state.liked ? 'fotoAtualizacoes-like-ativo' : 'fotoAtualizacoes-like' }>Likar</a>
-        <form className="fotoAtualizacoes-form">
-          <input type="text" placeholder="Adicione um comentário..." className="fotoAtualizacoes-form-campo"/>
+        <form className="fotoAtualizacoes-form" onSubmit={ this.commentPhoto.bind(this) }>
+          <input type="text" placeholder="Adicione um comentário..." className="fotoAtualizacoes-form-campo" ref={ input => this.comment = input }/>
           <input type="submit" value="Comentar!" className="fotoAtualizacoes-form-submit"/>
         </form>
       </section>
