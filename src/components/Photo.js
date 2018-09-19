@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import Pubsub from 'pubsub-js'
 
 class PhotoHeader extends Component {
   render() {
@@ -20,12 +21,50 @@ class PhotoHeader extends Component {
 }
 
 class PhotoInfo extends Component {
+
+  constructor( props ) {
+    super(props)
+
+    this.state = {
+      likers: this.props.photo.likers
+    }
+  }
+
+  componentWillMount() {
+    Pubsub.subscribe('update-liker', (topic, infoLiker) => {
+
+      if (this.props.photo.id === infoLiker.photoId) {
+
+        const possibleLiker = this.state.likers.find( liker => {
+          return liker.login === infoLiker.liker.login 
+        })
+
+        if (possibleLiker === undefined) {
+          
+          const newLikers = this.state.likers.concat(infoLiker.liker)
+          
+          this.setState({
+            likers: newLikers
+          })
+        } else {
+          const newLikers = this.state.likers.filter( liker => { 
+            return liker.login !== infoLiker.liker.login 
+          })
+
+          this.setState({
+            likers: newLikers
+          })
+        }
+      }
+    })
+  }
+
   render() {
     return (
       <div className="foto-info">
         <div className="foto-info-likes">
           {
-            this.props.photo.likers.map(( liker ) => {
+            this.state.likers.map(( liker ) => {
               return  <Link to={`/timeline/${ liker.login }`} key={ liker.login } >{ liker.login }, </Link>
             })
           }
@@ -56,7 +95,7 @@ class PhotoInfo extends Component {
 
 class PhotoUpdates extends Component {
 
-  constructor(props) {
+  constructor( props ) {
     super(props)
 
     this.state = {
@@ -81,9 +120,9 @@ class PhotoUpdates extends Component {
         }
       })
       .then( liker => {
-        this.setState({
-          liked: !this.state.liked
-        })
+        this.setState({ liked: !this.state.liked })
+        
+        Pubsub.publish('update-liker', { photoId: this.props.photo.id, liker })
       })
   }
 
