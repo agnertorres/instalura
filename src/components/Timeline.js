@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Pubsub from 'pubsub-js'
 
 import PhotoItem from './Photo'
 
@@ -10,6 +11,12 @@ export default class Timeline extends Component {
     this.state = {
       photos: []
     }
+  }
+
+  componentWillMount() {
+    Pubsub.subscribe('timeline', (topic, photos) => {
+      this.setState({ photos })
+    })
   }
 
   componentDidMount() {

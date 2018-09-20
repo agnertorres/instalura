@@ -1,6 +1,25 @@
 import React, { Component } from 'react'
+import Pubsub from 'pubsub-js'
 
 export default class Header extends Component {
+
+  search( event ) {
+    event.preventDefault()
+
+    const requestUrl = `https://instalura-api.herokuapp.com/api/public/fotos/${ this.searchedLogin.value }`
+
+    fetch(requestUrl)
+      .then( response => {
+        if(response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Não foi possível realizar a busca')
+        }
+      })
+      .then( photos => {
+        Pubsub.publish('timeline', photos)
+      })
+  }
     
   render() {
     return (
@@ -9,9 +28,9 @@ export default class Header extends Component {
           Instalura
         </h1>
 
-        <form className="header-busca">
-          <input type="text" name="search" placeholder="Pesquisa" className="header-busca-campo"/>
-          <input type="submit" value="Buscar" className="header-busca-submit"/>
+        <form className="header-busca" onSubmit={ this.search.bind(this) }>
+          <input type="text" name="search" placeholder="Pesquisa" className="header-busca-campo" ref={ input => this.searchedLogin = input} />
+          <input type="submit" value="Buscar" className="header-busca-submit" />
         </form>
 
         <nav>

@@ -80,7 +80,7 @@ class PhotoInfo extends Component {
               return  <Link to={`/timeline/${ liker.login }`} key={ liker.login } >{ liker.login }, </Link>
             })
           }
-          curtiram
+          <span className={ this.state.likers.length > 0 ? '' : 'hide' }>curtiram</span>
         </div>
 
         <p className="foto-info-legenda">
