@@ -3,6 +3,9 @@ import { Redirect, matchPath } from 'react-router-dom'
 
 import Header from './components/Header'
 import Timeline from './components/Timeline'
+import TimelineLogic from './logics/TimelineLogic'
+
+const timelineLogic = new TimelineLogic([])
 
 class App extends Component {
 
@@ -33,7 +36,7 @@ class App extends Component {
           <div className="main">
   
             <Header/>
-            <Timeline loginParam={ this.props.match.params.login }/>
+            <Timeline loginParam={ this.props.match.params.login } timelineLogic={ timelineLogic } />
             
           </div>
         </div>
