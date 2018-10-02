@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 
+import TimelineApi from '../logics/TimelineApi'
 import PhotoItem from './Photo'
 
 export default class Timeline extends Component {
@@ -13,8 +14,8 @@ export default class Timeline extends Component {
   }
 
   componentWillMount() {
-    this.props.timelineLogic.subscribe( photos => {
-      this.setState({ photos })
+    this.props.store.subscribe(() => {
+      this.setState({ photos: this.props.store.getState() })
     })
   }
 
@@ -40,15 +41,15 @@ export default class Timeline extends Component {
       profileUrl = `https://instalura-api.herokuapp.com/api/fotos?X-AUTH-TOKEN=${ authToken }`
     }
 
-    this.props.timelineLogic.getProfilePhotos(profileUrl)
+    this.props.store.dispatch(TimelineApi.getProfilePhotos(profileUrl))
   }
 
   likePhoto( photoId ) {
-    this.props.timelineLogic.likePhoto(photoId)
+    this.props.store.dispatch(TimelineApi.likePhoto(photoId))
   }
 
-  commentPhoto(photoId, commentValue) {
-    this.props.timelineLogic.commentPhoto(photoId, commentValue)
+  commentPhoto( photoId, commentValue ) {
+    this.props.store.dispatch(TimelineApi.commentPhoto(photoId, commentValue))
   }
 
   render() {
