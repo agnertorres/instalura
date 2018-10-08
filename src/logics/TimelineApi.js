@@ -1,7 +1,8 @@
 import { 
   getProfilePhotos,
   likePhoto,
-  commentPhoto
+  commentPhoto,
+  notify
 } from '../actions/actionCreator'
 
 export default class TimelineApi {
@@ -69,6 +70,32 @@ export default class TimelineApi {
 
           return newComment
         })
+    }
+  }
+
+  static search( searchedLogin ) {
+    return dispatch => {
+      const requestUrl = `https://instalura-api.herokuapp.com/api/public/fotos/${ searchedLogin }`
+
+      fetch(requestUrl)
+        .then( response => {
+          if(response.ok) {
+            return response.json()
+          } else {
+            throw new Error('Não foi possível realizar a busca')
+          }
+        })
+        .then( photos => {
+
+          if(photos.length === 0) {
+            dispatch(notify('Usuário não encontrado'))
+          } else {
+            dispatch(notify('Usuário encontrado'))
+          }
+
+          dispatch(getProfilePhotos(photos))
+          return photos
+        })      
     }
   }
 } 

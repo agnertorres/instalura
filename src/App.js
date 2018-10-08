@@ -1,14 +1,16 @@
 import React, { Component } from 'react'
 import { Redirect, matchPath } from 'react-router-dom'
-import { createStore, applyMiddleware } from 'redux'
+import { createStore, applyMiddleware, combineReducers } from 'redux'
 import thunkMiddleware from 'redux-thunk'
 
 import { timeline } from './reducers/timeline'
+import { notify } from './reducers/header'
 
 import Header from './components/Header'
 import Timeline from './components/Timeline'
 
-const store = createStore(timeline, applyMiddleware(thunkMiddleware))
+const reducers = combineReducers({notify, timeline})
+const store = createStore(reducers, applyMiddleware(thunkMiddleware))
 
 class App extends Component {
 
@@ -38,7 +40,7 @@ class App extends Component {
         <div id="root">
           <div className="main">
   
-            <Header/>
+            <Header store={ store }/>
             <Timeline loginParam={ this.props.match.params.login } store={ store } />
             
           </div>

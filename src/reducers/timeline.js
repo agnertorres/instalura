@@ -11,7 +11,7 @@ function swapPhoto( list, photoId, callbackUpdateProperties ) {
   return list.set(photoListIndex, newStatePhoto)
 }
 
-export function timeline( state=[], action ) {
+export function timeline( state = [], action ) {
 
   if(action.type === 'GET_PROFILE_PHOTOS') {
     return new List(action.photos)

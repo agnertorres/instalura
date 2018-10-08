@@ -9,3 +9,7 @@ export function likePhoto( photoId, liker ) {
 export function commentPhoto( photoId, newComment ) {
     return {type: 'COMMENT_PHOTO', photoId, newComment}
 }
+
+export function notify( message ) {
+    return {type: 'NOTIFY', message}
+}

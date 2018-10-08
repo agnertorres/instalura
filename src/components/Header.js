@@ -1,24 +1,24 @@
 import React, { Component } from 'react'
-import Pubsub from 'pubsub-js'
+import TimelineApi from '../logics/TimelineApi'
 
 export default class Header extends Component {
 
+  constructor() {
+    super()
+    this.state = {
+      message: ''
+    }
+  }
+
+  componentDidMount() {
+    this.props.store.subscribe(() => {
+      this.setState({message: this.props.store.getState().notify})
+    })
+  }
+
   search( event ) {
     event.preventDefault()
-
-    const requestUrl = `https://instalura-api.herokuapp.com/api/public/fotos/${ this.searchedLogin.value }`
-
-    fetch(requestUrl)
-      .then( response => {
-        if(response.ok) {
-          return response.json()
-        } else {
-          throw new Error('Não foi possível realizar a busca')
-        }
-      })
-      .then( photos => {
-        Pubsub.publish('timeline', photos)
-      })
+    this.props.store.dispatch(TimelineApi.search(this.searchedLogin.value))
   }
     
   render() {
@@ -36,6 +36,7 @@ export default class Header extends Component {
         <nav>
           <ul className="header-nav">
             <li className="header-nav-item">
+              <span>{ this.state.message }</span>
               <a href="#">
                 ♡
                 {/*                 ♥ */}
