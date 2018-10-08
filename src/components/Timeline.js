@@ -1,24 +1,11 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 
 import TimelineApi from '../logics/TimelineApi'
 import PhotoItem from './Photo'
 
-export default class Timeline extends Component {
-
-  constructor( props ) {
-    super(props)
-
-    this.state = {
-      photos: []
-    }
-  }
-
-  componentWillMount() {
-    this.props.store.subscribe(() => {
-      this.setState({ photos: this.props.store.getState().timeline })
-    })
-  }
-
+class Timeline extends Component {
+  
   componentDidMount() {
     this.getProfilePhotos()
   }
@@ -41,30 +28,44 @@ export default class Timeline extends Component {
       profileUrl = `https://instalura-api.herokuapp.com/api/fotos?X-AUTH-TOKEN=${ authToken }`
     }
 
-    this.props.store.dispatch(TimelineApi.getProfilePhotos(profileUrl))
-  }
-
-  likePhoto( photoId ) {
-    this.props.store.dispatch(TimelineApi.likePhoto(photoId))
-  }
-
-  commentPhoto( photoId, commentValue ) {
-    this.props.store.dispatch(TimelineApi.commentPhoto(photoId, commentValue))
+    this.props.list(profileUrl)
   }
 
   render() {
     return (
       <div className="fotos container">
         {
-        this.state.photos.map(photo => { 
+        this.props.photos.map(photo => { 
           return <PhotoItem 
             key={ photo.id } 
             photo={ photo } 
-            likePhoto={ this.likePhoto.bind(this) } 
-            commentPhoto={ this.commentPhoto.bind(this) } /> 
+            likePhoto={ this.props.likePhoto } 
+            commentPhoto={ this.props.commentPhoto } /> 
         })
         }
       </div>
     )
   }
 }
+
+function mapStateToProps( state ) {
+  return {
+    photos: state.timeline
+  }
+}
+
+function mapDispatchToProps( dispatch ) {
+  return {
+    likePhoto: ( photoId ) => {
+      dispatch(TimelineApi.likePhoto(photoId))
+    },
+    commentPhoto: ( photoId, commentValue ) => {
+      dispatch(TimelineApi.commentPhoto(photoId, commentValue))
+    },
+    list: ( profileUrl ) => {
+      dispatch(TimelineApi.getProfilePhotos(profileUrl))
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Timeline)
